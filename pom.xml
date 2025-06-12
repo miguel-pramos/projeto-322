@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.unicamp</groupId>
+	<artifactId>smartshelf</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>smartshelf</name>
+	<description>Swing Desktop Application for Book Management with FlatLaf</description>
+
+	<properties>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!-- SQLite JDBC Driver -->
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.45.3.0</version>
+		</dependency>
+
+		<!-- FlatLaf - Modern Look and Feel for Swing -->
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>3.2.5</version>
+		</dependency>
+
+		<!-- FlatLaf Extras - Additional themes -->
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf-extras</artifactId>
+			<version>3.2.5</version>
+		</dependency>
+
+		<!-- FlatLaf IntelliJ Themes -->
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf-intellij-themes</artifactId>
+			<version>3.2.5</version>
+		</dependency>
+
+		<!-- JUnit for testing -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.10.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<source>21</source>
+					<target>21</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<mainClass>com.unicamp.smartshelf.SmartshelfApplication</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
