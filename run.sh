@@ -38,7 +38,7 @@ if [ $? -eq 0 ]; then
     echo ""
 
     # Executar a aplicação
-    mvn exec:java -Dexec.mainClass="com.unicamp.smartshelf.SmartshelfApplication" -q
+    mvn exec:java -Dexec.mainClass="com.unicamp.smartshelf.FicticiousBet" -q
 else
     echo "❌ Erro na compilação. Verifique os logs acima."
     exit 1
