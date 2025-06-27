@@ -1,6 +1,6 @@
 package br.com.betmaster.controller;
 
-import br.com.betmaster.dao.UserDAO;
+import br.com.betmaster.model.dao.UserDAO;
 import br.com.betmaster.view.LoginView;
 
 import javax.swing.JOptionPane;

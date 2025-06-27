@@ -1,7 +1,8 @@
-package br.com.betmaster.dao;
+package br.com.betmaster.model.dao;
 
 import br.com.betmaster.db.DatabaseManager;
-import br.com.betmaster.model.User;
+import br.com.betmaster.model.entity.User;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;

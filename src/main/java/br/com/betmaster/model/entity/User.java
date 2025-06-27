@@ -1,4 +1,4 @@
-package br.com.betmaster.model;
+package br.com.betmaster.model.entity;
 
 /**
  * Classe de entidade (POJO) para representar um usuário.
