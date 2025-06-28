@@ -1,9 +1,10 @@
-package br.com.betmaster.main;
+package br.com.betmaster;
 
 import br.com.betmaster.db.DatabaseManager;
 import br.com.betmaster.view.MainFrame;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * Ponto de entrada principal para a aplicação BetMaster.
@@ -16,7 +17,7 @@ public class BetMasterApplication {
 
         // Define o Look and Feel do sistema para uma aparência nativa
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            FlatLightLaf.setup();
         } catch (Exception e) {
             e.printStackTrace();
         }

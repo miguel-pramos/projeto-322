@@ -7,8 +7,8 @@ public enum MatchStatus {
     SCHEDULED("Marcado", "O jogo está marcado."),
     CANCELLED("Cancelado", "O jogo foi cancelado.");
 
-    String name;
-    String description;
+    public final String name;
+    public final String description;
 
     private MatchStatus(String name, String description) {
         this.name = name;

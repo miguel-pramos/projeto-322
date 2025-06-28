@@ -2,6 +2,8 @@ package br.com.betmaster.model.entity;
 
 import java.util.Date;
 
+import br.com.betmaster.model.enums.BetStatus;
+
 public class Bet {
 
     private int id;
@@ -10,12 +12,14 @@ public class Bet {
     private double amount;
     private Team chosenTeam;
     private Date betDate;
+    private BetStatus status;
 
-    public Bet(Match match, User user, double amount, Team chosenTeam) {
+    public Bet(User user, Match match, double amount, Team chosenTeam, BetStatus status) {
         this.match = match;
         this.user = user;
         this.amount = amount;
         this.chosenTeam = chosenTeam;
+        this.status = status;
         this.betDate = new Date();
     }
 
@@ -25,6 +29,14 @@ public class Bet {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public BetStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BetStatus status) {
+        this.status = status;
     }
 
     public Match getMatch() {

@@ -29,12 +29,43 @@ public class DatabaseManager {
         String createUserTableSQL = "CREATE TABLE IF NOT EXISTS users (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " username TEXT NOT NULL UNIQUE," +
-                " password TEXT NOT NULL);";
+                " password TEXT NOT NULL," +
+                " role TEXT NOT NULL);";
+
+        String createTeamTableSQL = "CREATE TABLE IF NOT EXISTS teams (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " name TEXT NOT NULL UNIQUE," +
+                " attack INTEGER NOT NULL," +
+                " midfield INTEGER NOT NULL," +
+                " defence INTEGER NOT NULL);";
+
+        String createMatchTableSQL = "CREATE TABLE IF NOT EXISTS matches (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " status TEXT NOT NULL," +
+                " date TEXT NOT NULL," +
+                " team1_id INTEGER," +
+                " team2_id INTEGER," +
+                " FOREIGN KEY(team1_id) REFERENCES teams(id)," +
+                " FOREIGN KEY(team2_id) REFERENCES teams(id));";
+
+        String createBetTableSQL = "CREATE TABLE IF NOT EXISTS bets (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " match_id INTEGER," +
+                " user_id INTEGER," +
+                " chosen_team_id INTEGER," + 
+                " amount REAL NOT NULL," +
+                " bet_status TEXT NOT NULL," +
+                " FOREIGN KEY(chosen_team_id) REFERENCES teams(id)," +
+                " FOREIGN KEY(match_id) REFERENCES matches(id)," +
+                " FOREIGN KEY(user_id) REFERENCES users(id));";
 
         try (Connection conn = getConnection();
                 Statement stmt = conn.createStatement()) {
-            // Cria a tabela de usuários
+            // Cria as tabelas
             stmt.execute(createUserTableSQL);
+            stmt.execute(createTeamTableSQL);
+            stmt.execute(createMatchTableSQL);
+            stmt.execute(createBetTableSQL);
             System.out.println("Banco de dados inicializado com sucesso.");
         } catch (SQLException e) {
             System.err.println("Erro ao inicializar o banco de dados: " + e.getMessage());

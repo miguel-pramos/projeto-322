@@ -2,7 +2,7 @@ package br.com.betmaster.model.dao;
 
 import br.com.betmaster.db.DatabaseManager;
 import br.com.betmaster.model.entity.User;
-
+import br.com.betmaster.model.enums.UserRole;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
@@ -22,13 +22,13 @@ public class UserDAO {
      * @return true se o usuário foi criado com sucesso, false caso contrário.
      */
     public boolean createUser(User user) {
-        String sql = "INSERT INTO users(username, password) VALUES(?, ?)";
+        String sql = "INSERT INTO users(username, password, role) VALUES(?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
-        try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, hashedPassword);
+            pstmt.setString(3, user.getRole().name());
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -47,16 +47,16 @@ public class UserDAO {
         String sql = "SELECT * FROM users WHERE username = ?";
         User user = null;
 
-        try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                user = new User();
+                user = new User(
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        UserRole.valueOf(rs.getString("role")));
                 user.setId(rs.getInt("id"));
-                user.setUsername(rs.getString("username"));
-                user.setPassword(rs.getString("password"));
             }
         } catch (SQLException e) {
             System.err.println("Erro ao buscar usuário: " + e.getMessage());
@@ -77,5 +77,26 @@ public class UserDAO {
             return BCrypt.checkpw(plainPassword, user.getPassword());
         }
         return false;
+    }
+
+    public User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        User user = null;
+
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user = new User(
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        UserRole.valueOf(rs.getString("role")));
+                user.setId(rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar usuário por ID: " + e.getMessage());
+        }
+        return user;
     }
 }

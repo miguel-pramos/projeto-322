@@ -3,71 +3,72 @@ package br.com.betmaster.view;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Painel (JPanel) contendo os campos de texto e botões para a tela de login.
- */
-public class LoginView extends JPanel {
-
-    private JTextField usernameField;
+public class RegisterView extends JPanel {
+    private JTextField userField;
     private JPasswordField passwordField;
-    private JButton loginButton;
     private JButton registerButton;
+    private JButton backButton;
 
-    public LoginView() {
-        initComponents();
-    }
-
-    private void initComponents() {
+    public RegisterView() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Rótulo e campo de usuário
+        // Title
+        JLabel titleLabel = new JLabel("Cadastro de Usuário", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(new JLabel("Usuário:"), gbc);
+        gbc.gridwidth = 2;
+        add(titleLabel, gbc);
 
-        gbc.gridx = 1;
-        usernameField = new JTextField(15);
-        add(usernameField, gbc);
-
-        // Rótulo e campo de senha
-        gbc.gridx = 0;
+        // User field
+        gbc.gridwidth = 1;
         gbc.gridy = 1;
-        add(new JLabel("Senha:"), gbc);
-
+        gbc.gridx = 0;
+        add(new JLabel("Usuário:"), gbc);
         gbc.gridx = 1;
-        passwordField = new JPasswordField(15);
+        userField = new JTextField(20);
+        add(userField, gbc);
+
+        // Password field
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        add(new JLabel("Senha:"), gbc);
+        gbc.gridx = 1;
+        passwordField = new JPasswordField(20);
         add(passwordField, gbc);
 
-        // Botão de login
+        // Buttons
+        gbc.gridy = 4;
         gbc.gridx = 0;
-        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        loginButton = new JButton("Login");
         registerButton = new JButton("Cadastrar");
-        buttonPanel.add(loginButton);
+        backButton = new JButton("Voltar");
         buttonPanel.add(registerButton);
-
+        buttonPanel.add(backButton);
         add(buttonPanel, gbc);
     }
 
     public String getUsername() {
-        return usernameField.getText();
+        return userField.getText();
     }
+
 
     public String getPassword() {
         return new String(passwordField.getPassword());
     }
 
-    public JButton getLoginButton() {
-        return loginButton;
-    }
-
     public JButton getRegisterButton() {
         return registerButton;
+    }
+
+    public JButton getBackButton() {
+        return backButton;
     }
 }

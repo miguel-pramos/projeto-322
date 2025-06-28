@@ -1,21 +1,26 @@
 package br.com.betmaster.model.entity;
 
 import java.util.Date;
-import java.util.List;
 
 import br.com.betmaster.model.enums.MatchStatus;
 
 public class Match {
 
     private int id;
-    private String name;
-    private List<Team> teams;
+    private Team teamA, teamB;
     private MatchStatus status;
     private Date date;
 
-    public Match(String name, List<Team> teams, MatchStatus status, Date date) {
-        this.name = name;
-        this.teams = teams;
+    public Match(Team teamA, Team teamB, Date date) {
+        this.teamA = teamA;
+        this.teamB = teamB;
+        this.date = date;
+        this.status = MatchStatus.SCHEDULED;
+    }
+
+    public Match(Team team1, Team team2, MatchStatus status, Date date) {
+        this.teamA = team1;
+        this.teamB = team2;
         this.status = status;
         this.date = date;
     }
@@ -36,20 +41,20 @@ public class Match {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Team getTeamA() {
+        return teamA;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTeamA(Team team1) {
+        this.teamA = team1;
     }
 
-    public List<Team> getTeams() {
-        return teams;
+    public Team getTeamB() {
+        return teamB;
     }
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
+    public void setTeamB(Team team2) {
+        this.teamB = team2;
     }
 
     public MatchStatus getStatus() {

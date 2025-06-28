@@ -1,8 +1,12 @@
 package br.com.betmaster.controller;
 
 import br.com.betmaster.model.dao.UserDAO;
+import br.com.betmaster.model.entity.User;
+import br.com.betmaster.view.DashboardView;
 import br.com.betmaster.view.LoginView;
+import br.com.betmaster.view.RegisterView;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -10,27 +14,49 @@ import javax.swing.JOptionPane;
  */
 public class LoginController {
 
+    private LoginView view;
     private UserDAO userDAO;
+    private JFrame mainFrame;
 
-    public LoginController() {
+    public LoginController(LoginView view, JFrame mainFrame) {
+        this.view = view;
         this.userDAO = new UserDAO();
+        this.mainFrame = mainFrame;
+        initController();
     }
 
-    /**
-     * Tenta autenticar um usuário.
-     *
-     * @param username o nome de usuário.
-     * @param password a senha.
-     * @return true se a autenticação for bem-sucedida, false caso contrário.
-     */
-    public boolean login(String username, String password) {
+    private void initController() {
+        view.getLoginButton().addActionListener(e -> login());
+        view.getRegisterButton().addActionListener(e -> showRegisterView());
+    }
+
+    public void login() {
+        String username = view.getUsername();
+        String password = view.getPassword();
+
         if (userDAO.validatePassword(username, password)) {
-            JOptionPane.showMessageDialog(null, "Login bem-sucedido!");
-            return true;
+            JOptionPane.showMessageDialog(view, "Login bem-sucedido!");
+
+            User user = userDAO.getUserByUsername(username);
+
+            mainFrame.getContentPane().removeAll();
+            DashboardView dashboardView = new DashboardView(user);
+            new DashboardController(dashboardView, user); // Adiciona o controller
+            mainFrame.add(dashboardView);
+            mainFrame.revalidate();
+            mainFrame.repaint();
         } else {
-            JOptionPane.showMessageDialog(null, "Usuário ou senha inválidos.", "Erro de Login",
+            JOptionPane.showMessageDialog(view, "Usuário ou senha inválidos.", "Erro de Login",
                     JOptionPane.ERROR_MESSAGE);
-            return false;
         }
+    }
+
+    private void showRegisterView() {
+        mainFrame.getContentPane().removeAll();
+        RegisterView registerView = new RegisterView();
+        new RegisterController(registerView, mainFrame);
+        mainFrame.add(registerView);
+        mainFrame.revalidate();
+        mainFrame.repaint();
     }
 }
