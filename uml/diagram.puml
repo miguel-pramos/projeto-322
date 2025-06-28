@@ -1,0 +1,169 @@
+@startuml classes_diagram
+
+!theme vibrant
+
+package "Model" {
+    package "Entity" {
+        class User {
+            -id: int
+            -username: String
+            -password: String
+            -email: String
+            -role: UserRole
+        }
+
+        class Team {
+            -id: int
+            -name: String
+            -attack: int
+            -midfield: int
+            -defence: int
+        }
+
+        class Match {
+            -id: int
+            -teamA: Team
+            -teamB: Team
+            -date: Date
+            -status: MatchStatus
+        }
+
+        class Bet {
+            -id: int
+            -match: Match
+            -user: User
+            -amount: double
+            -chosenTeam: Team
+            -betDate: Date
+            -status: BetStatus
+        }
+
+        enum UserRole {
+            USER
+            ADMIN
+        }
+
+        enum MatchStatus {
+            SCHEDULED
+            IN_PROGRESS
+            FINISHED
+        }
+
+        enum BetStatus {
+            PENDING
+            WON
+            LOST
+        }
+    }
+
+    package "DAO" {
+        class UserDAO {
+            +getUserByUsername(String): User
+            +validatePassword(String, String): boolean
+            +createUser(User): boolean
+        }
+
+        class TeamDAO {
+            +createTeam(Team): boolean
+            +getTeamById(int): Team
+            +getAllTeams(): List<Team>
+        }
+
+        class MatchDAO {
+            +createMatch(Match): boolean
+            +getMatchById(int): Match
+            +getAllMatches(): List<Match>
+        }
+
+        class BetDAO {
+            +createBet(Bet): boolean
+            +getAllBets(): List<Bet>
+        }
+    }
+}
+
+package "View" {
+    class MainFrame
+    class LoginView
+    class RegisterView
+    class DashboardView
+    class MatchesPanel
+    class BetsPanel
+    class AdminPanel
+    class CreateTeamPanel
+    class CreateMatchPanel
+}
+
+package "Controller" {
+    class LoginController {
+        +login()
+        +showRegisterView()
+    }
+
+    class RegisterController {
+        +registerUser()
+    }
+
+    class DashboardController {
+        +loadMatches()
+        +loadBets()
+        +placeBet()
+    }
+
+
+
+    class AdminController {
+        +createTeam()
+        +createMatch()
+    }
+}
+
+package "DB" {
+    class DatabaseManager {
+        +getConnection(): Connection
+        +initializeDatabase()
+    }
+}
+
+' Relationships
+UserDAO ..> DatabaseManager
+TeamDAO ..> DatabaseManager
+MatchDAO ..> DatabaseManager
+BetDAO ..> DatabaseManager
+
+LoginController --> LoginView
+LoginController --> UserDAO
+LoginController --> MainFrame
+LoginController ..> DashboardView
+LoginController ..> RegisterView
+
+RegisterController --> RegisterView
+RegisterController --> UserDAO
+RegisterController --> MainFrame
+
+DashboardController --> DashboardView
+DashboardController --> MatchDAO
+DashboardController --> BetDAO
+DashboardController --> AdminController
+
+AdminController --> AdminPanel
+AdminController --> TeamDAO
+AdminController --> MatchDAO
+
+MainFrame *-- LoginView
+MainFrame *-- RegisterView
+MainFrame *-- DashboardView
+
+DashboardView *-- MatchesPanel
+DashboardView *-- BetsPanel
+DashboardView *-- AdminPanel
+
+AdminPanel *-- CreateTeamPanel
+AdminPanel *-- CreateMatchPanel
+
+User "1" -- "*" Bet
+Match "1" -- "*" Bet
+Team "1" -- "1..*" Match
+Team "1" -- "1..*" Bet
+
+@enduml
