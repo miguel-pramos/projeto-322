@@ -11,6 +11,7 @@ public class User {
     private String username;
     private String password; // Armazenará o hash da senha
     private UserRole role;
+    private Wallet wallet;
 
     // Construtores, Getters e Setters
 
@@ -21,6 +22,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.wallet = new Wallet();
     }
 
     public int getId() {
@@ -53,5 +55,13 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public Wallet getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
     }
 }
