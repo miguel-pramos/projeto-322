@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +15,22 @@ public class TransactionDAO {
 
     public Transaction createTransaction(Transaction transaction, int walletId, Connection conn) throws SQLException {
         String sql = "INSERT INTO transactions(wallet_id, type, value) VALUES(?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, walletId);
             pstmt.setString(2, transaction.getTransactionType().name());
-            pstmt.setLong(3, transaction.getValue());
+            pstmt.setDouble(3, transaction.getValue());
             pstmt.executeUpdate();
 
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                transaction.setId(rs.getInt(1));
+            // Busca o ID da transação criada
+            String selectSql = "SELECT id FROM transactions WHERE wallet_id = ? AND type = ? AND value = ? ORDER BY id DESC LIMIT 1";
+            try (PreparedStatement selectPstmt = conn.prepareStatement(selectSql)) {
+                selectPstmt.setInt(1, walletId);
+                selectPstmt.setString(2, transaction.getTransactionType().name());
+                selectPstmt.setDouble(3, transaction.getValue());
+                ResultSet rs = selectPstmt.executeQuery();
+                if (rs.next()) {
+                    transaction.setId(rs.getInt("id"));
+                }
             }
             return transaction;
         }
@@ -50,7 +56,7 @@ public class TransactionDAO {
             while (rs.next()) {
                 Transaction transaction = new Transaction(
                         TransactionType.valueOf(rs.getString("type")),
-                        rs.getLong("value"));
+                        rs.getDouble("value"));
                 transaction.setId(rs.getInt("id"));
                 transactions.add(transaction);
             }

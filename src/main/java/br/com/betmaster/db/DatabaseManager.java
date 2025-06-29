@@ -62,6 +62,8 @@ public class DatabaseManager {
                 " date TEXT NOT NULL," +
                 " team1_id INTEGER," +
                 " team2_id INTEGER," +
+                " odd_team_a REAL DEFAULT 1.0," +
+                " odd_team_b REAL DEFAULT 1.0," +
                 " FOREIGN KEY(team1_id) REFERENCES teams(id)," +
                 " FOREIGN KEY(team2_id) REFERENCES teams(id));";
 

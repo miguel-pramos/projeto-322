@@ -16,13 +16,15 @@ public class MatchDAO {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public boolean createMatch(Match match) {
-        String sql = "INSERT INTO matches(status, date, team1_id, team2_id) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO matches(status, date, team1_id, team2_id, odd_team_a, odd_team_b) VALUES(?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, match.getStatus().name());
             pstmt.setString(2, dateFormat.format(match.getDate()));
             pstmt.setInt(3, match.getTeamA().getId());
             pstmt.setInt(4, match.getTeamB().getId());
+            pstmt.setDouble(5, match.getOddA());
+            pstmt.setDouble(6, match.getOddB());
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -48,6 +50,8 @@ public class MatchDAO {
                         MatchStatus.valueOf(rs.getString("status")),
                         dateFormat.parse(rs.getString("date")));
                 match.setId(rs.getInt("id"));
+                match.setOddA(rs.getDouble("odd_team_a"));
+                match.setOddB(rs.getDouble("odd_team_b"));
             }
         } catch (SQLException | ParseException e) {
             System.err.println("Erro ao buscar partida: " + e.getMessage());
@@ -71,6 +75,8 @@ public class MatchDAO {
                         MatchStatus.valueOf(rs.getString("status")),
                         dateFormat.parse(rs.getString("date")));
                 match.setId(rs.getInt("id"));
+                match.setOddA(rs.getDouble("odd_team_a"));
+                match.setOddB(rs.getDouble("odd_team_b"));
                 matches.add(match);
             }
         } catch (SQLException | ParseException e) {

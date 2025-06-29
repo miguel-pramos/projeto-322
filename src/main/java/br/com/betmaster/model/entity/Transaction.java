@@ -5,9 +5,9 @@ import br.com.betmaster.model.enums.TransactionType;
 public class Transaction {
     private int id;
     private TransactionType transactionType;
-    private Long value;
+    private Double value;
 
-    public Transaction(TransactionType transactionTypes, Long value) {
+    public Transaction(TransactionType transactionTypes, Double value) {
         this.transactionType = transactionTypes;
         this.value = value;
     }
@@ -28,11 +28,11 @@ public class Transaction {
         this.transactionType = transactionTypes;
     }
 
-    public Long getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Long value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }

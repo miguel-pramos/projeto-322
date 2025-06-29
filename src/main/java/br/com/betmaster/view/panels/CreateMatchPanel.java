@@ -1,12 +1,15 @@
 package br.com.betmaster.view.panels;
 
 import javax.swing.*;
+
+import br.com.betmaster.model.entity.Team;
+
 import java.awt.*;
 
 public class CreateMatchPanel extends JPanel {
 
-    private JComboBox<String> teamAComboBox;
-    private JComboBox<String> teamBComboBox;
+    private JComboBox<Team> teamAComboBox;
+    private JComboBox<Team> teamBComboBox;
     private JTextField dateField;
     private JButton createButton;
 
@@ -49,11 +52,11 @@ public class CreateMatchPanel extends JPanel {
         add(createButton, gbc);
     }
 
-    public JComboBox<String> getTeamAComboBox() {
+    public JComboBox<Team> getTeamAComboBox() {
         return teamAComboBox;
     }
 
-    public JComboBox<String> getTeamBComboBox() {
+    public JComboBox<Team> getTeamBComboBox() {
         return teamBComboBox;
     }
 

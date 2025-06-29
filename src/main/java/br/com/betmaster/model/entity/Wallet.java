@@ -6,10 +6,10 @@ import java.util.List;
 public class Wallet {
     private int id;
     private List<Transaction> transactions;
-    private Long balance;
+    private Double balance;
 
     public Wallet() {
-        this.balance = 0L;
+        this.balance = 0D;
         this.transactions = new ArrayList<>();
     }
 
@@ -29,11 +29,11 @@ public class Wallet {
         this.transactions = transactions;
     }
 
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 

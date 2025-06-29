@@ -16,7 +16,7 @@ public class MatchesPanel extends JPanel {
     }
 
     private void initComponents() {
-        String[] columnNames = { "Time A", "Time B", "Data", "Status" };
+        String[] columnNames = { "Time A", "Odd A", "Time B", "Odd B", "Data", "Status" };
         tableModel = new DefaultTableModel(columnNames, 0);
         matchesTable = new JTable(tableModel);
 

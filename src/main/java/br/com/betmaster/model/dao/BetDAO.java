@@ -4,7 +4,6 @@ import br.com.betmaster.db.DatabaseManager;
 import br.com.betmaster.model.entity.Bet;
 import br.com.betmaster.model.entity.Match;
 import br.com.betmaster.model.entity.Team;
-import br.com.betmaster.model.entity.Transaction;
 import br.com.betmaster.model.entity.User;
 import br.com.betmaster.model.entity.Wallet;
 import br.com.betmaster.model.enums.BetStatus;
@@ -82,43 +81,35 @@ public class BetDAO {
 
     public boolean createBet(Bet bet) {
         String sql = "INSERT INTO bets(match_id, user_id, chosen_team_id, amount, bet_status) VALUES(?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseManager.getConnection()) {
-            // Desabilitar auto-commit para controlar a transação
-            conn.setAutoCommit(false);
 
-            // 1. Debitar da carteira e criar a transação
-            User user = bet.getUser();
-            Wallet wallet = user.getWallet();
+        User user = bet.getUser();
+        Wallet wallet = user.getWallet();
 
-            if (wallet.getBalance() < bet.getAmount()) {
-                System.err.println("Saldo insuficiente.");
-                conn.rollback(); // Desfaz a transação
+        // Validação de saldo
+        if (wallet.getBalance() < bet.getAmount()) {
+            System.err.println("Saldo insuficiente.");
+            return false;
+        }
+
+        try (Connection conn = DatabaseManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 1. Salvar a aposta
+            pstmt.setInt(1, bet.getMatch().getId());
+            pstmt.setInt(2, user.getId());
+            pstmt.setInt(3, bet.getChosenTeam().getId());
+            pstmt.setDouble(4, bet.getAmount());
+            pstmt.setString(5, bet.getStatus().name());
+            pstmt.executeUpdate();
+
+            // 2. Atualizar a carteira e criar a transação
+            WalletDAO walletDAO = new WalletDAO();
+            if (walletDAO.performTransaction(wallet, bet.getAmount(), TransactionType.BET_PLACED)) {
+                return true;
+            } else {
+                System.err.println("Erro ao processar transação da aposta.");
                 return false;
             }
-
-            Transaction transaction = new Transaction(TransactionType.BET_PLACED, (long) bet.getAmount());
-            wallet.addTransaction(transaction);
-
-            // 2. Salvar a aposta
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, bet.getMatch().getId());
-                pstmt.setInt(2, user.getId());
-                pstmt.setInt(3, bet.getChosenTeam().getId());
-                pstmt.setDouble(4, bet.getAmount());
-                pstmt.setString(5, bet.getStatus().name());
-                pstmt.executeUpdate();
-            }
-
-            // 3. Atualizar a carteira e salvar a transação no banco
-            WalletDAO walletDAO = new WalletDAO();
-            walletDAO.updateWallet(wallet, conn);
-
-            TransactionDAO transactionDAO = new TransactionDAO();
-            transactionDAO.createTransaction(transaction, wallet.getId(), conn);
-
-            // Se tudo deu certo, comitar a transação
-            conn.commit();
-            return true;
 
         } catch (SQLException e) {
             System.err.println("Erro ao criar aposta: " + e.getMessage());

@@ -2,14 +2,14 @@ package br.com.betmaster.model.dao;
 
 import br.com.betmaster.db.DatabaseManager;
 import br.com.betmaster.model.entity.User;
+import br.com.betmaster.model.entity.Wallet;
 import br.com.betmaster.model.enums.UserRole;
-import org.mindrot.jbcrypt.BCrypt;
+import br.com.betmaster.util.PasswordUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Classe responsável pelas operações de CRUD para a entidade User.
@@ -24,20 +24,26 @@ public class UserDAO {
      */
     public boolean createUser(User user) {
         String sql = "INSERT INTO users(username, password, role) VALUES(?, ?, ?)";
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
 
         try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, hashedPassword);
             pstmt.setString(3, user.getRole().name());
             pstmt.executeUpdate();
 
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                user.setId(rs.getInt(1));
-                WalletDAO walletDAO = new WalletDAO();
-                walletDAO.createWallet(user.getId());
+            // Busca o ID do usuário criado
+            String selectSql = "SELECT id FROM users WHERE username = ?";
+            try (PreparedStatement selectPstmt = conn.prepareStatement(selectSql)) {
+                selectPstmt.setString(1, user.getUsername());
+                ResultSet rs = selectPstmt.executeQuery();
+                if (rs.next()) {
+                    user.setId(rs.getInt("id"));
+                    // Cria a carteira para o usuário após criá-lo
+                    WalletDAO walletDAO = new WalletDAO();
+                    walletDAO.createWallet(user.getId());
+                }
             }
 
             return true;
@@ -48,16 +54,19 @@ public class UserDAO {
     }
 
     /**
-     * Busca um usuário pelo nome de usuário.
+     * Busca um usuário pelo nome de usuário e carrega sua carteira.
      *
      * @param username o nome de usuário a ser buscado.
      * @return o objeto User se encontrado, null caso contrário.
      */
     public User getUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT u.id as user_id, u.username, u.password, u.role, w.id as wallet_id, w.balance " +
+                "FROM users u LEFT JOIN wallets w ON u.id = w.user_id WHERE u.username = ?";
         User user = null;
 
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
 
@@ -66,9 +75,16 @@ public class UserDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         UserRole.valueOf(rs.getString("role")));
-                user.setId(rs.getInt("id"));
-                WalletDAO walletDAO = new WalletDAO();
-                user.setWallet(walletDAO.getWalletByUserId(user.getId()));
+                user.setId(rs.getInt("user_id"));
+
+                // Verifica se a carteira existe antes de criá-la
+                int walletId = rs.getInt("wallet_id");
+                if (!rs.wasNull()) {
+                    Wallet wallet = new Wallet();
+                    wallet.setId(walletId);
+                    wallet.setBalance(rs.getDouble("balance"));
+                    user.setWallet(wallet);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Erro ao buscar usuário: " + e.getMessage());
@@ -85,7 +101,7 @@ public class UserDAO {
      */
     public User validatePassword(String username, String plainPassword) {
         User user = getUserByUsername(username);
-        if (user != null && BCrypt.checkpw(plainPassword, user.getPassword())) {
+        if (user != null && PasswordUtil.checkPassword(plainPassword, user.getPassword())) {
             return user;
         }
         return null;
@@ -95,7 +111,6 @@ public class UserDAO {
         String sql = "SELECT * FROM users WHERE id = ?";
         User user = null;
         WalletDAO walletDAO = new WalletDAO();
-
 
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);

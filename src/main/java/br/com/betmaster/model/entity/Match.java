@@ -39,6 +39,22 @@ public class Match {
 
     }
 
+    public double getOddA() {
+        return oddA;
+    }
+
+    public void setOddA(double oddA) {
+        this.oddA = oddA;
+    }
+
+    public double getOddB() {
+        return oddB;
+    }
+
+    public void setOddB(double oddB) {
+        this.oddB = oddB;
+    }
+
     public Date getDate() {
         return date;
     }

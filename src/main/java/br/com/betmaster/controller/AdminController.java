@@ -17,11 +17,20 @@ public class AdminController {
     private AdminPanel view;
     private TeamDAO teamDAO;
     private MatchDAO matchDAO;
+    private DashboardController dashboardController;
 
     public AdminController(AdminPanel view) {
         this.view = view;
         this.teamDAO = new TeamDAO();
         this.matchDAO = new MatchDAO();
+        initController();
+    }
+
+    public AdminController(AdminPanel view, DashboardController dashboardController) {
+        this.view = view;
+        this.teamDAO = new TeamDAO();
+        this.matchDAO = new MatchDAO();
+        this.dashboardController = dashboardController;
         initController();
     }
 
@@ -33,11 +42,28 @@ public class AdminController {
 
     private void loadTeamsIntoComboBoxes() {
         List<Team> teams = teamDAO.getAllTeams();
-        String[] teamNames = teams.stream().map(Team::getName).toArray(String[]::new);
-        DefaultComboBoxModel<String> modelA = new DefaultComboBoxModel<>(teamNames);
-        DefaultComboBoxModel<String> modelB = new DefaultComboBoxModel<>(teamNames);
+
+        // O modelo agora armazena objetos Team, não apenas os nomes
+        DefaultComboBoxModel<Team> modelA = new DefaultComboBoxModel<>(teams.toArray(new Team[0]));
+        DefaultComboBoxModel<Team> modelB = new DefaultComboBoxModel<>(teams.toArray(new Team[0]));
+
         view.getCreateMatchPanel().getTeamAComboBox().setModel(modelA);
         view.getCreateMatchPanel().getTeamBComboBox().setModel(modelB);
+
+        ListCellRenderer<Object> renderer = new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Team) {
+                    setText(((Team) value).getName());
+                }
+                return this;
+            }
+        };
+
+        view.getCreateMatchPanel().getTeamAComboBox().setRenderer(renderer);
+        view.getCreateMatchPanel().getTeamBComboBox().setRenderer(renderer);
     }
 
     private void createTeam() {
@@ -87,6 +113,10 @@ public class AdminController {
             Match match = new Match(teamA, teamB, date);
             if (matchDAO.createMatch(match)) {
                 JOptionPane.showMessageDialog(view, "Partida criada com sucesso!");
+                // Notifica o DashboardController para atualizar a tabela de partidas
+                if (dashboardController != null) {
+                    dashboardController.refreshMatches();
+                }
             } else {
                 JOptionPane.showMessageDialog(view, "Erro ao criar partida.", "Erro", JOptionPane.ERROR_MESSAGE);
             }

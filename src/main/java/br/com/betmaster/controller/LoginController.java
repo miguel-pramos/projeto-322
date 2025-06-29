@@ -34,14 +34,14 @@ public class LoginController {
         String username = view.getUsername();
         String password = view.getPassword();
 
-        if (userDAO.validatePassword(username, password)) {
-            JOptionPane.showMessageDialog(view, "Login bem-sucedido!");
+        User user = userDAO.validatePassword(username, password);
 
-            User user = userDAO.getUserByUsername(username);
+        if (user != null) {
+            JOptionPane.showMessageDialog(view, "Login bem-sucedido!");
 
             mainFrame.getContentPane().removeAll();
             DashboardView dashboardView = new DashboardView(user);
-            new DashboardController(dashboardView, user); // Adiciona o controller
+            new DashboardController(dashboardView, user, mainFrame);
             mainFrame.add(dashboardView);
             mainFrame.revalidate();
             mainFrame.repaint();
