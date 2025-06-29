@@ -50,13 +50,18 @@ public class WalletDAO {
         return wallet;
     }
 
-    public void updateWallet(Wallet wallet) {
+    public void updateWallet(Wallet wallet, Connection conn) throws SQLException {
         String sql = "UPDATE wallets SET balance = ? WHERE id = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, wallet.getBalance());
             pstmt.setInt(2, wallet.getId());
             pstmt.executeUpdate();
+        }
+    }
+
+    public void updateWallet(Wallet wallet) {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            updateWallet(wallet, conn);
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar carteira: " + e.getMessage());
         }

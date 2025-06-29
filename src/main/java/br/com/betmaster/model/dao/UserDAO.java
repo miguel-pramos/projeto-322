@@ -81,14 +81,14 @@ public class UserDAO {
      *
      * @param username      o nome de usuário.
      * @param plainPassword a senha em texto plano.
-     * @return true se a senha for válida, false caso contrário.
+     * @return o objeto User se a senha for válida, null caso contrário.
      */
-    public boolean validatePassword(String username, String plainPassword) {
+    public User validatePassword(String username, String plainPassword) {
         User user = getUserByUsername(username);
-        if (user != null) {
-            return BCrypt.checkpw(plainPassword, user.getPassword());
+        if (user != null && BCrypt.checkpw(plainPassword, user.getPassword())) {
+            return user;
         }
-        return false;
+        return null;
     }
 
     public User getUserById(int id) {

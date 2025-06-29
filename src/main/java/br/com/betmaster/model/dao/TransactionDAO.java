@@ -14,10 +14,9 @@ import java.util.List;
 
 public class TransactionDAO {
 
-    public Transaction createTransaction(Transaction transaction, int walletId) {
+    public Transaction createTransaction(Transaction transaction, int walletId, Connection conn) throws SQLException {
         String sql = "INSERT INTO transactions(wallet_id, type, value) VALUES(?, ?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, walletId);
             pstmt.setString(2, transaction.getTransactionType().name());
             pstmt.setLong(3, transaction.getValue());
@@ -28,6 +27,12 @@ public class TransactionDAO {
                 transaction.setId(rs.getInt(1));
             }
             return transaction;
+        }
+    }
+
+    public Transaction createTransaction(Transaction transaction, int walletId) {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            return createTransaction(transaction, walletId, conn);
         } catch (SQLException e) {
             System.err.println("Erro ao criar transação: " + e.getMessage());
             return null;
