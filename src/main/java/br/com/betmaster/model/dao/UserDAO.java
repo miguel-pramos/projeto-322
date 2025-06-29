@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Classe responsável pelas operações de CRUD para a entidade User.
@@ -25,11 +26,20 @@ public class UserDAO {
         String sql = "INSERT INTO users(username, password, role) VALUES(?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, hashedPassword);
             pstmt.setString(3, user.getRole().name());
             pstmt.executeUpdate();
+
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                user.setId(rs.getInt(1));
+                WalletDAO walletDAO = new WalletDAO();
+                walletDAO.createWallet(user.getId());
+            }
+
             return true;
         } catch (SQLException e) {
             System.err.println("Erro ao criar usuário: " + e.getMessage());
@@ -57,6 +67,8 @@ public class UserDAO {
                         rs.getString("password"),
                         UserRole.valueOf(rs.getString("role")));
                 user.setId(rs.getInt("id"));
+                WalletDAO walletDAO = new WalletDAO();
+                user.setWallet(walletDAO.getWalletByUserId(user.getId()));
             }
         } catch (SQLException e) {
             System.err.println("Erro ao buscar usuário: " + e.getMessage());
@@ -82,6 +94,8 @@ public class UserDAO {
     public User getUserById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         User user = null;
+        WalletDAO walletDAO = new WalletDAO();
+
 
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -93,6 +107,7 @@ public class UserDAO {
                         rs.getString("password"),
                         UserRole.valueOf(rs.getString("role")));
                 user.setId(rs.getInt("id"));
+                user.setWallet(walletDAO.getWalletByUserId(user.getId()));
             }
         } catch (SQLException e) {
             System.err.println("Erro ao buscar usuário por ID: " + e.getMessage());

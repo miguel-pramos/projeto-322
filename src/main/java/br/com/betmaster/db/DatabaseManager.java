@@ -1,5 +1,9 @@
 package br.com.betmaster.db;
 
+import br.com.betmaster.model.dao.UserDAO;
+import br.com.betmaster.model.entity.User;
+import br.com.betmaster.model.enums.UserRole;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -32,6 +36,19 @@ public class DatabaseManager {
                 " password TEXT NOT NULL," +
                 " role TEXT NOT NULL);";
 
+        String createWalletTableSQL = "CREATE TABLE IF NOT EXISTS wallets (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " user_id INTEGER NOT NULL UNIQUE," +
+                " balance REAL NOT NULL," +
+                " FOREIGN KEY(user_id) REFERENCES users(id));";
+
+        String createTransactionTableSQL = "CREATE TABLE IF NOT EXISTS transactions (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " wallet_id INTEGER NOT NULL," +
+                " type TEXT NOT NULL," +
+                " value REAL NOT NULL," +
+                " FOREIGN KEY(wallet_id) REFERENCES wallets(id));";
+
         String createTeamTableSQL = "CREATE TABLE IF NOT EXISTS teams (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " name TEXT NOT NULL UNIQUE," +
@@ -52,7 +69,7 @@ public class DatabaseManager {
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " match_id INTEGER," +
                 " user_id INTEGER," +
-                " chosen_team_id INTEGER," + 
+                " chosen_team_id INTEGER," +
                 " amount REAL NOT NULL," +
                 " bet_status TEXT NOT NULL," +
                 " FOREIGN KEY(chosen_team_id) REFERENCES teams(id)," +
@@ -63,12 +80,27 @@ public class DatabaseManager {
                 Statement stmt = conn.createStatement()) {
             // Cria as tabelas
             stmt.execute(createUserTableSQL);
+            stmt.execute(createWalletTableSQL);
+            stmt.execute(createTransactionTableSQL);
             stmt.execute(createTeamTableSQL);
             stmt.execute(createMatchTableSQL);
             stmt.execute(createBetTableSQL);
+
+            // Cria ambiente de desenvolvimento
+            createDevEnvironment();
+
             System.out.println("Banco de dados inicializado com sucesso.");
         } catch (SQLException e) {
             System.err.println("Erro ao inicializar o banco de dados: " + e.getMessage());
+        }
+    }
+
+    private static void createDevEnvironment() {
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.getUserByUsername("admin") == null) {
+            User admin = new User("admin", "admin", UserRole.ADMIN);
+            userDAO.createUser(admin);
+            System.out.println("Usuário 'admin' de desenvolvimento criado.");
         }
     }
 }
