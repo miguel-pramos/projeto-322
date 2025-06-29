@@ -6,14 +6,18 @@ public class Team {
     private int attack;
     private int defence;
     private int midfield;
+    private int teamstrenght;
 
     public Team(String name, int attack, int defence, int midfield) {
         this.attack = attack;
         this.defence = defence;
         this.midfield = midfield;
         this.name = name;
+        this.teamstrenght = attack + defence + midfield;
     }
-
+    public int getTeamStrenght(){
+        return teamstrenght;
+    }
     public int getMidfield() {
         return midfield;
     }

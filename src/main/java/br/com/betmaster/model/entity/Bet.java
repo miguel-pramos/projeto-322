@@ -13,7 +13,7 @@ public class Bet {
     private Team chosenTeam;
     private Date betDate;
     private BetStatus status;
-    private Od od;
+
 
     public Bet(User user, Match match, double amount, Team chosenTeam, BetStatus status) {
         this.match = match;

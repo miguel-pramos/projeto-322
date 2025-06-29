@@ -10,6 +10,7 @@ public class Match {
     private Team teamA, teamB;
     private MatchStatus status;
     private Date date;
+    private double oddA, oddB;
 
     public Match(Team teamA, Team teamB, Date date) {
         this.teamA = teamA;
@@ -23,6 +24,17 @@ public class Match {
         this.teamB = team2;
         this.status = status;
         this.date = date;
+    }
+
+    public void setOdd() {
+        double oddA = teamA.getTeamStrenght(),
+                oddB = teamB.getTeamStrenght(),
+                totalStrenght = oddA + oddB;
+        oddA = oddA / totalStrenght; oddB = oddB / totalStrenght;
+        this.oddA = 1 / oddA;
+        this.oddB = 1/ oddB;
+        
+
     }
 
     public Date getDate() {
