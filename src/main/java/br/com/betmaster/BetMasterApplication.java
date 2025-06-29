@@ -1,10 +1,13 @@
 package br.com.betmaster;
 
 import br.com.betmaster.db.DatabaseManager;
+import br.com.betmaster.util.FontLoader;
 import br.com.betmaster.view.MainFrame;
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import java.util.Enumeration;
 
 /**
  * Ponto de entrada principal para a aplicação BetMaster.
@@ -12,20 +15,29 @@ import javax.swing.SwingUtilities;
 public class BetMasterApplication {
 
     public static void main(String[] args) {
+        // Configura o Look and Feel FlatLaf
+        FlatDarkLaf.setup();
+
         // Inicializa o banco de dados
         DatabaseManager.initializeDatabase();
 
-        // Define o Look and Feel do sistema para uma aparência nativa
-        try {
-            FlatLightLaf.setup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Configura a fonte personalizada para toda a aplicação
+        setUIFont(new javax.swing.plaf.FontUIResource(FontLoader.getFont(14f)));
 
-        // Garante que a criação da GUI seja feita na Event Dispatch Thread (EDT)
+        // Inicia a interface gráfica
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);
         });
+    }
+
+    public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+        Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof javax.swing.plaf.FontUIResource)
+                UIManager.put(key, f);
+        }
     }
 }
