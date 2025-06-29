@@ -24,9 +24,10 @@ public class Match {
         this.teamB = team2;
         this.status = status;
         this.date = date;
+        setOdd();
     }
 
-    public void setOdd() {
+    private void setOdd() {
         double oddA = teamA.getTeamStrenght(),
                 oddB = teamB.getTeamStrenght(),
                 totalStrenght = oddA + oddB;
