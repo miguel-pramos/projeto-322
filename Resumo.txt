@@ -1,0 +1,49 @@
+O projeto consiste em um sistema de casa de apostas esportivas chamado BetMaster, desenvolvido em Java com a interface gráfica Swing. 
+O sistema permite que os usuários se cadastrem, façam login, gerenciem suas carteiras virtuais e realizem apostas em partidas 
+esportivas. A aplicação possui dois tipos de perfis de usuário: "USER" (usuário comum) e "ADMIN" (administrador), cada um com 
+diferentes níveis de acesso e funcionalidades.
+
+A arquitetura do sistema é dividida em camadas, com pacotes para a interface (`view`), controle de lógica (`controller`), acesso a 
+dados (`model/dao`), entidades de modelo (`model/entity`) e utilitários (`util`). O banco de dados utilizado é o SQLite, e a conexão
+é gerenciada pela classe `DatabaseManager`, que também é responsável por criar as tabelas necessárias na primeira inicialização. A 
+segurança das senhas dos usuários é tratada com hashing usando a biblioteca jBCrypt.
+
+O fluxo de uso para um usuário comum começa na tela de login, onde ele pode entrar com suas credenciais ou se registrar para criar 
+uma nova conta. Após o login, o usuário é direcionado para um painel principal (dashboard) com abas para visualizar as partidas 
+disponíveis, suas apostas realizadas e o status de cada uma, e gerenciar sua carteira. Na carteira, é possível depositar e sacar 
+valores, além de visualizar o histórico de transações. Para fazer uma aposta, o usuário seleciona uma partida, escolhe um dos times,
+e informa o valor que deseja apostar. O sistema calcula o ganho potencial com base nas "odds" (probabilidades) de cada time e, se o 
+usuário confirmar, o valor da aposta é debitado de seu saldo.
+
+Usuários com perfil de administrador têm acesso a um painel de administração adicional, que lhes permite cadastrar novos times no 
+sistema (especificando atributos como ataque, meio-campo e defesa) e criar novas partidas, selecionando os times e a data do evento.
+
+### Funcionalidades do sistema ###
+
+* **Autenticação e Cadastro:**
+    * Fazer login com nome de usuário e senha.
+    * Cadastrar um novo usuário.
+    * Fazer logout do sistema.
+    * As senhas dos usuários são armazenadas de forma segura usando hash.
+
+* **Gestão de Usuários:**
+    * Dois tipos de perfis: usuário comum (USER) e administrador (ADMIN).
+    * Criação de um usuário "admin" padrão no primeiro uso do sistema para fins de desenvolvimento.
+
+* **Gestão de Carteira:**
+    * Adicionar saldo à carteira (depositar).
+    * Retirar saldo da carteira (sacar).
+    * Visualizar o saldo atual.
+    * Consultar o histórico de transações, como depósitos, saques e apostas realizadas.
+
+* **Apostas:**
+    * Visualizar a lista de partidas disponíveis com as respectivas odds.
+    * Fazer uma aposta em uma partida, escolhendo um time e o valor a ser apostado.
+    * Acompanhar o status das apostas realizadas (pendente, sucesso, falha).
+    * O saldo da carteira é validado antes de confirmar a aposta.
+
+* **Funcionalidades de Administrador:**
+    * Acesso a um painel de administração exclusivo.
+    * Cadastrar novos times, definindo seus atributos (ataque, defesa, meio-campo).
+    * Cadastrar novas partidas, definindo os times participantes e a data.
+    * As odds das partidas são calculadas com base nos atributos dos times.
