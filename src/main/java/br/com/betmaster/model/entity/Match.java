@@ -17,6 +17,7 @@ public class Match {
         this.teamB = teamB;
         this.date = date;
         this.status = MatchStatus.SCHEDULED;
+        setOdd();
     }
 
     public Match(Team team1, Team team2, MatchStatus status, Date date) {
@@ -31,10 +32,10 @@ public class Match {
         double oddA = teamA.getTeamStrenght(),
                 oddB = teamB.getTeamStrenght(),
                 totalStrenght = oddA + oddB;
-        oddA = oddA / totalStrenght; oddB = oddB / totalStrenght;
+        oddA = oddA / totalStrenght;
+        oddB = oddB / totalStrenght;
         this.oddA = 1 / oddA;
-        this.oddB = 1/ oddB;
-        
+        this.oddB = 1 / oddB;
 
     }
 
