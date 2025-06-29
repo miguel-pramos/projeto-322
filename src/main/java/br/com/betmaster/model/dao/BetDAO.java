@@ -24,9 +24,6 @@ public class BetDAO {
                 ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                // Esta é uma implementação simplificada. Você precisará de DAOs para User e
-                // Match
-                // para carregar os objetos completos.
                 UserDAO userDAO = new UserDAO();
                 MatchDAO matchDAO = new MatchDAO();
                 TeamDAO teamDAO = new TeamDAO();
@@ -50,6 +47,36 @@ public class BetDAO {
         return bets;
     }
 
+    public List<Bet> getBetsByUserId(int userId) {
+        String sql = "SELECT * FROM bets WHERE user_id = ?";
+        List<Bet> bets = new ArrayList<>();
+        UserDAO userDAO = new UserDAO();
+        MatchDAO matchDAO = new MatchDAO();
+        TeamDAO teamDAO = new TeamDAO();
+
+        try (Connection conn = DatabaseManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                User user = userDAO.getUserById(userId);
+                Match match = matchDAO.getMatchById(rs.getInt("match_id"));
+                Team team = teamDAO.getTeamById(rs.getInt("chosen_team_id"));
+
+                bets.add(new Bet(user,
+                        match,
+                        rs.getInt("amount"),
+                        team,
+                        BetStatus.valueOf(rs.getString("bet_status"))));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar apostas: " + e.getMessage());
+        }
+        return bets;
+
+    }
+
     public boolean createBet(Bet bet) {
         String sql = "INSERT INTO bets(match_id, user_id, chosen_team_id, amount, bet_status) VALUES(?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
@@ -66,4 +93,5 @@ public class BetDAO {
             return false;
         }
     }
+
 }
