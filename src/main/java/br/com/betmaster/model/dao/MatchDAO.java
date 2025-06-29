@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MatchDAO {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     public boolean createMatch(Match match) {
         String sql = "INSERT INTO matches(status, date, team1_id, team2_id, odd_team_a, odd_team_b) VALUES(?, ?, ?, ?, ?, ?)";

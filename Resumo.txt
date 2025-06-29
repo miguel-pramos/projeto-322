@@ -47,3 +47,27 @@ sistema (especificando atributos como ataque, meio-campo e defesa) e criar novas
     * Cadastrar novos times, definindo seus atributos (ataque, defesa, meio-campo).
     * Cadastrar novas partidas, definindo os times participantes e a data.
     * As odds das partidas são calculadas com base nos atributos dos times.
+
+### Responsabilidade ###
+
+
+* */src/main/java/com/betmaster/controller: 
+Controla a lógica do programa, fazendo a ponte entre a interface do usuário e os dados.
+
+* */src/main/java/com/betmaster/model/dao: 
+Responsável por acessar e manipular os dados no banco de dados (inserir, ler, atualizar, deletar).
+
+* */src/main/java/com/betmaster/model/entity: 
+Define as classes que representam os objetos do sistema, como User, Bet e Match.
+
+* */src/main/java/com/betmaster/util: 
+Contém classes com funções úteis e reutilizáveis, como a gestão da conexão com o banco de dados.
+
+* */src/main/java/com/betmaster/view: 
+Contém todas as telas da interface gráfica que o usuário vê e com as quais interage.
+
+* */src/main/resources: 
+Armazena arquivos de recursos, como o próprio arquivo do banco de dados SQLite.
+
+* */lib: 
+Guarda as bibliotecas externas que o projeto precisa para funcionar, como o driver do SQLite e o jBCrypt.

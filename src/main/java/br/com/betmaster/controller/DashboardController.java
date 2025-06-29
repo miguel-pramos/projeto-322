@@ -27,6 +27,7 @@ public class DashboardController {
     private BetDAO betDAO;
     private TransactionDAO transactionDAO;
     private WalletDAO walletDAO;
+    private AdminController adminController;
     private User user;
     private List<Match> matches;
     private JFrame mainFrame;
