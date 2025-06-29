@@ -4,7 +4,7 @@ import br.com.betmaster.model.dao.MatchDAO;
 import br.com.betmaster.model.dao.TeamDAO;
 import br.com.betmaster.model.entity.Match;
 import br.com.betmaster.model.entity.Team;
-import br.com.betmaster.view.AdminPanel;
+import br.com.betmaster.view.panels.AdminPanel;
 
 import javax.swing.*;
 import java.text.ParseException;

@@ -2,6 +2,8 @@ package br.com.betmaster.view;
 
 import br.com.betmaster.model.entity.User;
 import br.com.betmaster.model.enums.UserRole;
+import br.com.betmaster.view.panels.AdminPanel;
+import br.com.betmaster.view.panels.MatchesPanel;
 
 import javax.swing.*;
 import java.awt.*;

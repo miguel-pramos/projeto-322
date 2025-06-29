@@ -1,4 +1,4 @@
-package br.com.betmaster.view;
+package br.com.betmaster.view.panels;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
